@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+ <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+      <!--Override-->
+     <xpath expr="//div[hasclass('pos-receipt-contact')]" position="replace" >
+         <div class="pos-receipt-contact">
+                <t t-if="receipt.company.contact_address">
+                    <div><t t-esc="receipt.company.contact_address" /></div>
+                </t>
+                <t t-if="receipt.company.phone">
+                    <div>Tel:<t t-esc="receipt.company.phone" /></div>
+                </t>
+
+                <t t-if="receipt.company.email">
+                    <div><t t-esc="receipt.company.email" /></div>
+                </t>
+                <t t-if="receipt.company.website">
+                    <div><t t-esc="receipt.company.website" /></div>
+                </t>
+                <t t-if="receipt.header_html">
+                    <t t-raw="receipt.header_html" />
+                </t>
+                <t t-if="!receipt.header_html and receipt.header">
+                    <div style="white-space:pre-line"><t t-esc="receipt.header" /></div>
+                </t>
+                <t t-if="receipt.cashier">
+                    <div class="cashier">
+                        <div>--------------------------------</div>
+                        <div>Served by <t t-esc="receipt.cashier" /></div>
+                    </div>
+                </t>
+            </div>
+     </xpath>
+     <xpath expr="//div[hasclass('pos-receipt-order-data')]" position="replace">
+          <div class="pos-receipt-order-data">
+
+          </div>
+     </xpath>
+
+     <xpath expr="//div[hasclass('orderlines')]" position="before">
+             <div style='text-align:center;border-bottom: 1px dashed black;margin-bottom:3px'>
+                <div><strong> فاتورة ضريبية مبسطة </strong></div>
+                <div> <strong> SIMPLIFIED TAX INVOICE </strong></div>
+            </div>
+             <table class='receipt-orderlines'>
+                    <colgroup>
+                        <col width='35%' />
+                        <col width='65%' />
+                    </colgroup>
+                    <tr style="border-bottom: 1px solid #e6e6e6">
+                        <td style='text-align:left'>Invoice No:<br/> رقم الفاتورة </td>
+                         <td>
+                            <span t-esc="receipt.name"/>
+                        </td>
+
+                    </tr>
+
+                  <tr style="border-bottom: 1px solid #e6e6e6">
+                        <td>Issue Date: <br/>  تاريخ الإصدار </td>
+                        <td>
+                            <span t-esc="receipt.date.localestring"/>
+                        </td>
+                    </tr>
+                   <tr t-if="receipt.company.vat" style="border-bottom: 0px solid #cccccc;">
+                        <td>VAT No: <br/>الرقم الضريبي </td>
+                        <td>
+                            <t t-esc="receipt.company.vat" />
+                        </td>
+                    </tr>
+
+                </table>
+            <br/>
+
+        </xpath>
+        <xpath expr="//div[hasclass('orderlines')]" position="replace">
+            <div class="orderlines">
+                <table class='receipt-orderlines'>
+                    <colgroup>
+                        <col width='30%' />
+                        <col width='15%' />
+                        <col width='20%' />
+                        <col width='30%' />
+                    </colgroup>
+                    <tr style="border-bottom: 1px dashed black;border-top: 1px dashed black;">
+                        <th style='text-align:left'>Item <br/> الصنف </th>
+                        <th style='text-align:center'>Qty <br/> الكمية</th>
+                        <th style='text-align:center'>U.P <br/> سعر الوحدة</th>
+                        <th style='text-align:center'>P.VAT السعر <br/> مع الضريبة </th>
+                    </tr>
+<!--                    <tr t-foreach="orderlines" t-as="orderline" t-key="orderline.id">-->
+<!--                        <td>-->
+<!--                            <t t-esc="orderline.get_product().display_name"/>-->
+<!--                            <br/>-->
+<!--                            <div class="pos-disc-font">-->
+<!--                                Discount per Unit:-->
+<!--                            <t t-esc='orderline.absolute_discount' />-->
+<!--                            <t t-esc='env.pos.currency.symbol' />-->
+<!--                </div>-->
+<!--                             <t t-if="orderline.get_discount() > 0">-->
+<!--                                <div class="pos-disc-font">-->
+<!--                                    With a <t t-esc="orderline.get_discount()"/>% discount-->
+<!--                                </div>-->
+<!--                                  <t t-if='orderline.absolute_discount and orderline.absolute_discount !== 0'>-->
+
+<!--            </t>-->
+<!--                            </t>-->
+<!--&lt;!&ndash;                                        <t t-if='orderline.absolute_discount and orderline.absolute_discount !== 0'>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="pos-receipt-left-padding">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <left>&ndash;&gt;-->
+<!--&lt;!&ndash;                        Discount per Unit:&ndash;&gt;-->
+<!--&lt;!&ndash;                        <t t-esc='orderline.absolute_discount' />&ndash;&gt;-->
+<!--&lt;!&ndash;                        <t t-esc='env.pos.currency.symbol' />&ndash;&gt;-->
+<!--&lt;!&ndash;                    </left>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </t>&ndash;&gt;-->
+
+<!--                        </td>-->
+<!--                        <td style='text-align:center'>-->
+<!--                            <t t-esc="orderline.get_quantity()"/>-->
+
+<!--&lt;!&ndash;                            <t t-esc="orderline.get_quantity_str_with_unit()"/>&ndash;&gt;-->
+<!--                        </td>-->
+<!--                        <td style='text-align:center'>-->
+<!--                            <t t-esc="env.pos.format_currency_no_symbol(orderline.get_unit_display_price())"></t>-->
+<!--                        </td >-->
+<!--                        <td style='text-align:right'>-->
+<!--                            <t t-esc="orderline.get_quantity()*orderline.get_unit_display_price()"/>-->
+<!--                            <br/>-->
+<!--                            <t t-esc="env.pos.format_currency_no_symbol(orderline.get_price_with_tax())"/>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+                    <t t-foreach="orderlines" t-as="orderline" t-key="orderline.id">
+                                        <tr>
+                        <td>
+                            <t t-esc="orderline.get_product().display_name"/>
+                        </td>
+                        <td style='text-align:center'>
+                            <t t-esc="orderline.get_quantity()"/>
+                        </td>
+                        <td style='text-align:center'>
+                            <t t-esc="env.pos.format_currency_no_symbol(orderline.get_unit_display_price())"></t>
+                        </td >
+                        <td style='text-align:right'>
+                            <t t-esc="orderline.get_quantity()*orderline.get_unit_display_price()"/>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td>
+<t t-if="orderline.absolute_discount > 0">
+                                         <div class="pos-disc-font">
+                                Discount per Unit:
+                                         </div>
+</t>
+                                 <t t-if="orderline.get_discount() > 0">
+                                <div class="pos-disc-font">
+                                    With a % discount
+                                </div>
+                                 </t>
+                            </td>
+                            <td/>
+                            <td/>
+                            <td/>
+                            <td style="text-align:right">
+                                <t t-if="orderline.absolute_discount > 0">
+                                         <div class="pos-disc-font">
+                            <t t-esc='orderline.absolute_discount' />
+                            <t t-esc='env.pos.currency.symbol' />
+                           </div>
+                                </t>
+                             <t t-if="orderline.get_discount() > 0">
+                                <div class="pos-disc-font">
+                                    <t t-esc="orderline.get_discount()"/>
+                                </div>
+            </t>
+                            </td>
+<!--                            <td style='text-align:right'><t t-esc="env.pos.format_currency_no_symbol(orderline.get_price_with_tax())"/></td>-->
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td/>
+                            <td/>
+                            <td>
+                            </td>
+                            <td style='text-align:right'><t t-esc="env.pos.format_currency_no_symbol(orderline.get_price_with_tax())"/></td>
+                        </tr>
+
+
+                    </t>
+                </table>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='!isTaxIncluded']" position="replace">
+            <div class="pos-receipt-right-align">--------</div>
+            <br/>
+            <div>
+                <div class="pos-receipt-left-align" style="float:left;margin-bottom: 10px;">
+                    <div>Total Taxable (Excluding VAT)</div>
+                    <div> الاجمالي الخاضع للضريبة</div>
+                </div>
+                <span t-esc="env.pos.format_currency(receipt.subtotal)" class="pos-receipt-right-align" style="margin-top:5px"/>
+                <br/>
+            </div>
+            <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
+                <div style="margin-top: 20px;margin-bottom: 20px;">
+                     <div class="pos-receipt-left-align" style="float:left">
+                        <div>Total VAT</div>
+                        <div> مجموع ضريبة القيمة المضافة</div>
+                     </div>
+                    <div class="pos-receipt-right-align" style="margin-top:5px">
+                        <span t-esc='env.pos.format_currency(tax.amount)' />
+                    </div>
+
+                    <br/>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('pos-receipt-amount')]" position="replace">
+            <div class="pos-receipt-amount" style="padding:0px;">
+              <div class="pos-receipt-left-align" style="float:left;margin-bottom: 10px;">
+                    <div>Total Amount</div>
+                    <div>إجمالي المبلغ المستحق</div>
+              </div>
+                <span t-esc="env.pos.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align" style="margin-top:10px"/>
+                <br/>
+            </div>
+
+     </xpath>
+        <xpath expr="//t[@t-foreach='receipt.paymentlines']" position="replace">
+            <div style="margin-bottom:20px">
+                <t t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
+                    <div>
+                         <div class="pos-receipt-left-align" style="float:left;margin-bottom: 5px;">
+                        <div><t t-esc="line.name" /> </div>
+                        <div>المدفوع</div>
+                     </div>
+                      <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align" style="margin-top:10px" />
+
+                    <br/>
+
+
+
+
+                </div>
+            </t>
+            </div>
+     </xpath>
+        <xpath expr="//div[hasclass('pos-receipt-amount') and hasclass('receipt-change')]" position="replace">
+        <div class="pos-receipt-amount receipt-change" style="padding:0px;">
+             <div class="pos-receipt-left-align" style="float:left;margin-bottom: 10px;">
+                    <div>CHANGE</div>
+                    <div>المتبقي</div>
+              </div>
+                 <span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align" style="margin-top:10px"/>
+
+
+         </div>
+     </xpath>
+
+      <!-- QR Code-->
+       <xpath expr="//div[hasclass('pos-receipt-order-data')]" position="before">
+<!--           <span t-esc="receipt.qr_image"/>-->
+<!--           <img src="receipt.qr_image" style="width:200px;"/>-->
+
+
+<div t-attf-id="qrcode_container">
+<!--    <t t-if="ItemPreview">-->
+           <img id="ItemPreview" src="" style="width:200px; height: 200px;"/>
+<!--    </t>-->
+</div>
+
+<!--           <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA4QAAAOEAQAAAADRNcKWAAAFF0lEQVR4nO3dSa7jNhAA0GKQvXyDvv/tpBMwCw0c/TtAEluBHhe/TYvWQ3NVKBbJlOOzbfvjw2AEkUgkEolEIpFIJBKJRCKRSCQSiUQikUgkEolEIpH4LTHy1YZHy/Xd+akbl/PavmC5/oyvOtr6hFklEolEIpF4O7FEI2PYk/MakdKr7f7KOaVXREoppZzXv/Gqx80qkUgkEonEL4l/dv20/7Os5xfLGim2FDmWvH8q4/L+YEuR9++WNfL7V+3tCbNKJBKJRCLxfyFuV55mS3vkUlI0Kf06FqqORM855B+J/3ojEolEIpH4TLHP53TtyM4s+fwTbZ7mTO/kKtHTJ3C69oRZJRKJRCKReAexj3O6spwjatle5xfLGnnvnmtZ3W9T2x3bE2aVSCQSiUTiHcQmztnmq05pL81Z1j2IqbvVn9ykct68Kp4xq0QikUgkEu8gVnHOLP9SiozrIeW7pg45V8tY79sTZpVIJBKJROIdxP78nHofeHXozXBWzlGbvNSn5nRP59vM1yfMKpFIJBKJxDuI/TF/JX55G86UcfNzAuMKcaYB0BNmlUgkEolE4h3EZt2qFNWUT82pOfVCVSlB3l57bXJuT9c5Xtq3J8wqkUgkEonEO4jTpajZ2tN8ySom+Zzl6kb7PvkcIpFIJBKJH22/W3aK61MXv0Q9pA6AypvXepw4h0gkEolE4mdbv9+qPhhwfNAcEfi6dlm9qm5cQ4695n17wqwSiUQikUi8g/jmvvKl7nbLWHX18dqmbbrBWR0ykUgkEonE74l9Piddn448zXn0X2rvfSh5mtT+tj48uQyp7oJ4wqwSiUQikUi8gzjmc5ah0vgYtw7FyLOynlmVsvocIpFIJBKJ383nHG1L0dXnRH3lw9qU3JQinYh3BTlde8KsEolEIpFIvIM4pmjWiPpMwNJm26/W+i3laZ0kUp9DJBKJRCLxO2Lkvq3Xg3VeVXw8X37YhD4bLM4hEolEIpH44dZFOfWjM2PztgxnXovTvX69XiXOIRKJRCKR+NE2W2KaLUrNruYsn364ByurQyYSiUQikfgVcXqP59vLyI/fdN24Bke93DWU5ohziEQikUgkfrQNS1bLEPHMoqCS4yk/m91SXj8V5xCJRCKRSPxoG/I5uQ5YSqwyW8aaH7GzXl8sszc/YVaJRCKRSCTeQezzOT+EM0u7hSommZ1xnDpkIpFIJBKJ3xLH/VZNEmY4RCfa0GWdd91vRSQSiUQi8ftifx5ybj/V3e113nl1tvOM5FzdeXXcg7Xk9lar0p4wq0QikUgkEu8gphLJlAs5u2657aG+rrN5Gu3P4v2Q7QmzSiQSiUQi8WZivT/q7Kb0urprREoppbogJyIitpSOPxEx33U+Fz/UiEQikUgkPlMc95WX1lXWnNHNvD6n+Vl3RrL6HCKRSCQSid+uzxkXoGaLV90K1tv1rei7e3vCrBKJRCKRSLyD2J+fc3w7brWaHwI45m6G16/dnehPmFUikUgkEol3EPv9Vl2r8zRLHcOUPE2uxkWcW7K61FDVfcKsEolEIpFIvIP4mzgn9qhlS+efaDecn3vNh+KeLV2LV92zJ8wqkUgkEonEO4rdZqqUfg3n/6WUUrd7PMq+rPKLo9sP/v7/kUgkEolE4jPE3+y3KkO6wXU8tNR3PNRHIUe494FIJBKJROLXxDSGN/9tc04gkUgkEolEIpFIJBKJRCKRSCQSiUQikUgkEolEIvFB4l9OYKagLR92FwAAAABJRU5ErkJggg==" style="width:200px;"/>-->
+       </xpath>
+
+
+<!--            <div t-attf-id="qrcode_container">-->
+<!--                <div id="qrcode"></div>-->
+<!--                &lt;!&ndash;<script type="text/javascript"> new QRCode(document.getElementById("qrcode_id"), qr_data);</script>&ndash;&gt;-->
+<!--                <script type="text/javascript">-->
+<!--                    var qr_data ="-->
+<!--                    Seller : <t t-esc="receipt.company.name"/>;-->
+<!--                    Invoice_No : <t t-esc="receipt.name"/>;-->
+<!--                    Date : <t t-esc="receipt.date.localestring"/>;-->
+<!--                    Total_Vat : <t t-esc="env.pos.format_currency(receipt.total_tax)"/>;-->
+<!--                    Total_Amount_Due : <t t-esc="env.pos.format_currency(receipt.total_with_tax)"/>;-->
+<!--                    Vat_No :<t t-esc="receipt.company.vat"/><t>ؘ</t>";-->
+<!--/-->
+<!--                    //console.log('1-',qr_data);-->
+
+<!--                    var qrcode = new QRCode('qrcode' , {-->
+<!--                    text: qr_data,-->
+<!--                    width: 160,-->
+<!--                    height: 160,-->
+<!--                    colorDark : "#000000",-->
+<!--                    colorLight : "#ffffff",-->
+<!--                    correctLevel : QRCode.CorrectLevel.H-->
+<!--                    });-->
+<!--                    qrcode.makeCode(qr_data);-->
+
+<!--                    $("#qrcode > img").css({"margin":"20px auto"});-->
+<!--                </script>-->
+<!--            </div>-->
+<!--       </xpath>-->
+
+    </t>
+
+</templates>
